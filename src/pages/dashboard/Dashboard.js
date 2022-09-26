@@ -10,7 +10,7 @@ import { Button } from 'primereact/button';
 // import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { TabView, TabPanel } from 'primereact/tabview';
-import Datatable from '../../components/datatable'
+import Datatable from '../../components/Datatable'
 
 function Dashboard(props) {
     const [displayBasic, setDisplayBasic] = useState(false);
@@ -19,6 +19,9 @@ function Dashboard(props) {
     const [selectCompany, setSelectCompany] = useState("")
     const [drilldown, setDrillDown] = useState([]);
     const [activeIndex, setActiveIndex] = useState(0);
+    const [displayDialogDetail, setDisplayDialogDetail] = useState(false);
+    const [selectedDetail, setSelectedDetail] = useState([]);
+
     useEffect(() => {
         props.getCognitiveData();
     }, [])
@@ -36,6 +39,11 @@ function Dashboard(props) {
     }
     let config = {
         responsive: true
+    }
+    const clickedColumn = (value) => {
+        console.log("value - - ",value);
+        setSelectedDetail(value);
+        setDisplayDialogDetail(true);
     }
     // console.log("Layout ", Layout)
     const graphOneClick = (data) => {
@@ -62,6 +70,9 @@ function Dashboard(props) {
     }
     const onHide = (name) => {
         setDisplayBasic(false);
+    }
+    const onHideDetail = (name) => {
+        setDisplayDialogDetail(false);
     }
     // const renderFooter = (name) => {
     //     return (
@@ -141,7 +152,7 @@ function Dashboard(props) {
                 <p style={{'color': 'blue'}}>Input "all" under Company filter to view all companies</p>
                 <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
                     <TabPanel header="Jobs">
-                        <Datatable data={props.modalJobData} columnList={dynamicJobColumns} />
+                        <Datatable data={props.modalJobData} columnList={dynamicJobColumns} clickedColumn={clickedColumn} />
                     </TabPanel>
                     <TabPanel header="News">
                         <Datatable data={props.modalNewsData} columnList={dynamicNewsColumns} />
@@ -153,6 +164,16 @@ function Dashboard(props) {
                         </DataTable> */}
                     </TabPanel>
                 </TabView>
+            </Dialog>
+            <Dialog header="Selected Data" visible={displayDialogDetail} style={{ width: '50vw' }} onHide={() => onHideDetail('displayDialogDetail')}>
+                <p>jobkey : {selectedDetail.jobKey}</p>
+                <p>jobtitle : {selectedDetail.jobtitle}</p>
+                <p>company : {selectedDetail.company}</p>
+                <p>city : {selectedDetail.city}</p>
+                <p>state: {selectedDetail.state}</p>
+                <p>date_posted: {selectedDetail.date_posted}</p>
+                <p>create_date: {selectedDetail.create_date}</p>
+                <p>text_content: {selectedDetail.text_content}</p>
             </Dialog>
         </div>
     );
