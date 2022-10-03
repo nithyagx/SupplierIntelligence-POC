@@ -42,19 +42,6 @@ export const getCognitiveData =  () => {
             }
             // }
         })
-        // var trace1 = {
-        //     x: ['giraffes', 'orangutans', 'monkeys'],
-        //     y: [20, 14, 23],
-        //     name: 'SF Zoo',
-        //     type: 'bar'
-        // };
-          
-        // var trace2 = {
-        //     x: ['giraffes', 'orangutans', 'monkeys'],
-        //     y: [12, 18, 29],
-        //     name: 'LA Zoo',
-        //     type: 'bar'
-        // };
         dispatch({type: 'GET_DASHBOARD_DATA', payload: {trace}})
         // dispatch({type: 'GET_DASHBOARD_DATA', payload: {trace1: trace1, trace2: trace2}})
         // let data = {'data': {'ndarray': '{"criteria1": ["alinks", "ansys", "ansys hpc", "ansys rf", "designer rf", "designmodeler", "designspace", "designxplorer", "exalto", "fluent", "geometry interface", "hfss", "human body model", "icepack", "maxwell", "mechanical", "multiphysics", "optimetrics", "path fx", "pathfinder", "power artist", "q3d", "raptorx", "redhawk", "redhawk sc", "seahawk", "sentinel", "siwave", "sow", "spaceclaim", "totem", "variance fx", "velocerf"], "criteria2": ["assertion based verification", "avm", "cdc", "clock domain crossing", "directed random verification", "fev", "formal equivalence verification", "formal property verification", "fpv", "functional coverage", "functional verification", "hardware description language", "hdl", "ip-xact", "logic equivalence checking", "logic simulation", "metric driven verification", "open verification library", "ovm", "portable stimulus", "pss", "random verification", "rdc", "register transfer level", "reset domain crossing", "rtl", "rtl coverage ", "rtl debug", "rtl design entry", "rtl development", "rtl lint", "rtl modeling", "rtl simulation", "rtl simulator", "rtl simulator performance", "rtl validation", "rtl verification", "silicon verification ip", "simulation performance", "simulation regression", "static verification", "sva", "systemrdl", "systemverilog", "systemverilog assertions", "test bench", "test suite", "testbench", "universal verification methodology", "uvm", "verification environment", "verilog", "vhdl", "vmm"], "grouping": ["amd", "apple", "applied micro circuits corporation", "arm holdings", "broadcom limited", "cisco systems", "ericsson", "globalfoundries", "google", "htc corporation", "huawei technologies", "ibm", "infineon technologies", "intel", "marvell technology group", "mediatek", "micron technology", "microsoft corporation", "nokia corporation", "nvidia corporation", "nxp semiconductors", "oculus", "on semiconductor", "qualcomm", "renesas electronics", "samsung electronics", "sk hynix", "sony corporation", "stmicroelectonics", "texas instruments", "toshiba corporation", "tsmc", "umc"], "start_time": "2021-09-02", "end_time": "2022-09-02", "datasrc": ["news", "jobs", "twitter"]}'}};
@@ -104,6 +91,7 @@ export const getDrilldownData = (selectCompany) => {
         })
         modalNewsData.push(inputData['response']['news']);
         modalTweetsData.push(inputData['response']['twitter']);
+        dispatch({type: 'GET_GRAPH_CLICK', payload: {selectCompany}})
         dispatch({type: 'GET_DRILLDOWN_DATA', payload: {modalJobData, modalNewsData, modalTweetsData}})
     }
 }

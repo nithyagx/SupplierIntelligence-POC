@@ -4,7 +4,8 @@ let initialState={
     trace:[],
     modalJobData: [],
     modalNewsData: [],
-    modalTweetsData: []
+    modalTweetsData: [],
+    getGraphClickCompany : ""
 }
 
 const dashboardReducer = (state=initialState,action) => {
@@ -23,6 +24,11 @@ const dashboardReducer = (state=initialState,action) => {
                 modalJobData: payload.modalJobData,
                 modalNewsData: payload.modalNewsData,
                 modalTweetsData: payload.modalTweetsData
+            }
+        case 'GET_GRAPH_CLICK':
+            return {
+                ...state,
+                getGraphClickCompany: payload.selectCompany
             }
         default:
             return state;
