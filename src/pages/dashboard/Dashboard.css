@@ -109,6 +109,10 @@
     background: #171819;
     color: #fff;
   }
+
+  .react-grid-item {
+    transition: none !important;
+  }
   
   .react-grid-item > .react-resizable-handle::after {
     border-right-color: rgba(255, 255, 255, 0.5);

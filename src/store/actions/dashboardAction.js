@@ -95,3 +95,9 @@ export const getDrilldownData = (selectCompany) => {
         dispatch({type: 'GET_DRILLDOWN_DATA', payload: {modalJobData, modalNewsData, modalTweetsData}})
     }
 }
+
+export const setConfigLayoutChange = (layout) => {
+    return async(dispatch, getState) => {
+        dispatch({type: 'SET_LAYOUT', payload: {layout}})
+    }
+}

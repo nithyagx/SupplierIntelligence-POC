@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import './Dashboard.css'
 import { GridLayout, Responsive, WidthProvider } from "react-grid-layout";
 import Plot from 'react-plotly.js';
-import { getCognitiveData, getDrilldownData } from "../../store/actions/dashboardAction"
+import { getCognitiveData, getDrilldownData, setConfigLayoutChange } from "../../store/actions/dashboardAction"
 import Layout from "../../constants/companyConfig";
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
@@ -22,6 +22,7 @@ function Dashboard(props) {
     const [activeIndex, setActiveIndex] = useState(0);
     const [displayDialogDetail, setDisplayDialogDetail] = useState(false);
     const [selectedDetail, setSelectedDetail] = useState([]);
+    const [layoutConfig, setLayoutConfig] = useState([{ x: 3, y: 0, w: 5, h:3 }]);
 
     useEffect(() => {
         props.getCognitiveData();
@@ -31,9 +32,26 @@ function Dashboard(props) {
     var graphLayout = {
         barmode: 'stack',
         autosize: true,
+        // useResizeHandler: true,
+        // width: 500,
+        // height: 500,
+        yaxis: {
+            automargin: true
+        },
+        xaxis: {
+            automargin: true
+        }
+        // margin: {
+        //     // l: 0,
+        //     // r: 10,
+        //     b: 20,
+        //     // t: 20,
+        //     pad: 5
+        // }
     }
     let config = {
-        responsive: true
+        responsive: true,
+        // dragmode: 'pan'
     }
     const clickedColumn = (value) => {
         console.log("value - - ",value);
@@ -198,28 +216,62 @@ function Dashboard(props) {
           </span>
         );
       }
-
+    const onGridLayoutResizeStop = (e) => {
+        // alert("hi")
+        // Plot.relayout('graph1');
+        console.log("e = ",e)
+        setLayoutConfig(e);
+        props.setConfigLayoutChange(e)
+        // document.querySelector('[data-title="Autoscale"]').click();
+        // Plot.relayout('graphParent', {
+        //     'xaxis.autorange': true,
+        //     'yaxis.autorange': true
+        // });
+    }
+    const onGridLayoutChange = e => {
+        // console.log("e = ",e)
+        // setLayoutConfig(e);
+        // props.setConfigLayoutChange(e)
+    }
+    const onDragStop = e => {
+        props.setConfigLayoutChange(e)
+    }
     return (
         <div>
-            {/* <ResponsiveGridLayout
+            <ResponsiveGridLayout
                 className="layout"
-                layout={layout}
+                layout={props && props.setChangedLayout}
                 // cols={12}
                 //   rowHeight={30}
                 width={1200}
                 isDraggable
                 isRearrangeable
                 isResizable
-                breakpoints={{ lg: 1280, md: 992, sm: 767, xs: 480, xxs: 0 }}
-                cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
-            > */}
-                <div key="graphParent" id="graph1" style={{ 'border': '1px solid', 'height': "550px", 'width': '700px' }}>
-                    <Plot id="graph2" data={data} layout={graphLayout} config={config} style={{ 'height': '100%', 'width': '100%' }}
+                autoSize
+                draggableHandle=".grid-item__title"
+                // breakpoints={{ lg: 1280, md: 992, sm: 767, xs: 480, xxs: 0 }}
+                // cols={{ lg: 12, md: 10, sm: 6, xs: 4, xxs: 2 }}
+                onResizeStop={(e) => onGridLayoutResizeStop(e)}
+                // onLayoutChange={e => onGridLayoutChange(e)}
+                onDragStop={(e) => onDragStop(e)}
+                useCSSTransforms
+            >
+                <div data-grid={props && props.setChangedLayout && props.setChangedLayout[0]} key="graphParent">
+                    <div className="grid-item__title" style={{'minWidth': '100%', 'color': '#000', 'fontWeight': 'bold'}}>Graph 1</div>
+                    <Plot id="graph1" className="grid-item__graph" data={data} layout={graphLayout} config={config} style={{ 'height': '100%', 'width': '100%' }}
                         onClick={(data) => { graphOneClick(data) }} />
                 </div>
-                {/* <div key="graph2" style={{ 'border': '1px solid' }}>b</div>
-                <div key="graph3" style={{ 'border': '1px solid' }}>c</div> */}
-            {/* </ResponsiveGridLayout> */}
+                <div data-grid={props && props.setChangedLayout && props.setChangedLayout[1]} key="graph2">
+                    <div className="grid-item__title" style={{'minWidth': '100%', 'color': '#000', 'fontWeight': 'bold'}}>Graph 2</div>
+                    <Plot id="graph" className="grid-item__graph" data={data} layout={graphLayout} config={config} style={{ 'height': '100%', 'width': '100%' }}
+                        onClick={(data) => { graphOneClick(data) }} />
+                </div>
+                <div data-grid={props && props.setChangedLayout && props.setChangedLayout[2]} key="graph3">
+                    <div className="grid-item__title" style={{'minWidth': '100%', 'color': '#000', 'fontWeight': 'bold'}}>Graph 3</div>
+                    <Plot id="graph" className="grid-item__graph" data={data} layout={graphLayout} config={config} style={{ 'height': '100%', 'width': '100%' }}
+                        onClick={(data) => { graphOneClick(data) }} />
+                </div>
+            </ResponsiveGridLayout>
             <Dialog visible={displayBasic} style={{ width: '50vw' }} onHide={() => onHide('displayBasic')}>
                 <p style={{'color': 'blue'}}>Input "all" under Company filter to view all companies</p>
                 <TabView activeIndex={activeIndex} onTabChange={(e) => setActiveIndex(e.index)}>
@@ -297,14 +349,16 @@ const mapStateToProps = (state) => {
         modalJobData: state.dashboard.modalJobData,
         modalNewsData: state.dashboard.modalNewsData,
         modalTweetsData: state.dashboard.modalTweetsData,
-        getGraphClickCompany: state.dashboard.getGraphClickCompany
+        getGraphClickCompany: state.dashboard.getGraphClickCompany,
+        setChangedLayout: state.dashboard.setChangedLayout
     }
 }
 
 const mapDispatchToProps = (dispatch) => {
     return {
         getCognitiveData: () => { dispatch(getCognitiveData()) },
-        getDrilldownData: (selectCompany) => { dispatch(getDrilldownData(selectCompany)) }
+        getDrilldownData: (selectCompany) => { dispatch(getDrilldownData(selectCompany)) },
+        setConfigLayoutChange: (layoutConfig) => { dispatch(setConfigLayoutChange(layoutConfig))}
     }
 }
 

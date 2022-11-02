@@ -5,7 +5,8 @@ let initialState={
     modalJobData: [],
     modalNewsData: [],
     modalTweetsData: [],
-    getGraphClickCompany : ""
+    getGraphClickCompany : "",
+    setChangedLayout: [{ x: 0, y: 0, w: 5, h:3 },{ x: 6, y: 0, w: 5, h:3 }, { x: 0, y: 4, w: 5, h:3 }]
 }
 
 const dashboardReducer = (state=initialState,action) => {
@@ -29,6 +30,11 @@ const dashboardReducer = (state=initialState,action) => {
             return {
                 ...state,
                 getGraphClickCompany: payload.selectCompany
+            }
+        case 'SET_LAYOUT':
+            return {
+                ...state,
+                setChangedLayout: payload.layout
             }
         default:
             return state;
